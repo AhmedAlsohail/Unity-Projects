@@ -16,7 +16,7 @@ public class Movement : MonoBehaviour
 
     public Animator animator;
 
-    public GameObject GameOverText, Restart;
+    public GameObject GameOverText, Restart, YourScore;
 
 
 
@@ -37,7 +37,7 @@ public class Movement : MonoBehaviour
 
         GameOverText.SetActive(false);
         Restart.SetActive(false);
-        YourScore.setActive()
+        YourScore.SetActive(false);
     }
 
     // Update is called once per frame
@@ -45,7 +45,7 @@ public class Movement : MonoBehaviour
     {
         if (enemynum.currentnum >= 5)
         {
-            gameObject.SetActive(false);
+            Destroyme();
         }
         float speed = Input.GetAxisRaw("Horizontal") * moveSpeed;
         animator.SetFloat("Speed", Mathf.Abs(speed));
@@ -60,23 +60,12 @@ public class Movement : MonoBehaviour
         jumpanimation();
 
 
-        if(isGrounded == true)
-        {
-            if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)) || Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || 
+                Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
                 animator.SetBool("Attacking", false);
 
             }
-        }
-        else
-        {
-            if ((Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) || Input.GetKey(KeyCode.Space))
-            {
-                animator.SetBool("Attacking", false);
-
-            }
-        }
-
 
     }
 
@@ -84,46 +73,27 @@ public class Movement : MonoBehaviour
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
         transform.position += movement * Time.deltaTime * moveSpeed;
-
-
-        if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)) && Input.GetKey(KeyCode.X))
-        {
-        
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-          
-        }
-
-
-
-
-
-
     }
 
     public void Jump() //jumping code
     {
-        if (Input.GetButtonDown("Jump") && isGrounded == true)
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && isGrounded == true)
         {
             gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpHeight), ForceMode2D.Impulse);
-      
-
-
         }
 
     }
 
     public void flip() //for the character to flip when moving
     {
-        if (Input.GetKey(KeyCode.RightArrow) && isfacingright == false && isSliding == false)
+        if ((Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && isfacingright == false && isSliding == false)
         {
             transform.Rotate(0f, 180f, 0f);
 
             isfacingright = !isfacingright;
         }
 
-        if (Input.GetKey(KeyCode.LeftArrow) && isfacingright == true && isSliding == false)
+        if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) && isfacingright == true && isSliding == false)
         {
             transform.Rotate(0f, 180f, 0f);
 
@@ -134,20 +104,25 @@ public class Movement : MonoBehaviour
 
     public void jumpanimation()
     {
-        if ((isGrounded == true))
+        if (isGrounded)
         {
             animator.SetBool("isJumping", false);
-
         }
+    }
+
+    private void Destroyme()
+    {
+        GameOverText.SetActive(true);
+        Restart.SetActive(true);
+        YourScore.SetActive(true);
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.tag.Equals("lavafloor"))
         {
-            GameOverText.SetActive(true);
-            Restart.SetActive(true);
-            gameObject.SetActive(false);
+            Destroyme();
         }
     }
  

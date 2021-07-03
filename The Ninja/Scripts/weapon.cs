@@ -8,6 +8,8 @@ public class weapon : MonoBehaviour
     public Transform attackpoint;
     [SerializeField] AudioClip attacksound;
 
+    float attackCooldown = 0.5f;
+    public float CooldownCounter;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,12 +19,17 @@ public class weapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                Instantiate(hitbox, attackpoint.position, attackpoint.rotation);
+    
+        if ((Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Mouse0)) && CooldownCounter <= 0)
+        {
+            Instantiate(hitbox, attackpoint.position, attackpoint.rotation);
             AudioSource.PlayClipAtPoint(attacksound, Camera.main.transform.position);
+            CooldownCounter = attackCooldown;
         }
-        
+        else if (CooldownCounter > 0)
+        {
+            CooldownCounter -= Time.deltaTime;
+        }
+
     }
 }

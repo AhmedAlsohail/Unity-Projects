@@ -16,14 +16,21 @@ public class enemy : MonoBehaviour
         if (enemyhealth <= 0)
         {
             Die();
-            enemynum.currentnum--;
         }
 
     }
 
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.tag.Equals("lavafloor"))
+        {
+            Die();
+        }
+    }
+
     private void Die()
     {
-       // Instantiate(deathEffect, transform.position, Quaternion.identity);
+        enemynum.currentnum--;
         Destroy(gameObject);
     }
 }
